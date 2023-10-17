@@ -60,9 +60,7 @@ class Validator:
         days = int(text.split()[0])
         month = text.split()[1].lower().title()
 
-        if (month not in days_count) or (days < 1 or days > days_count[month]):
-            return False
-        return True
+        return not (month not in days_count or days < 1 or days > days_count[month])
     
     def valid_input( self, validator, text, error_text ):
         value = input(text)
