@@ -120,6 +120,8 @@ class Notes:
     def tags(self, new_tag_values):
         if new_tag_values:
             self._tags = new_tag_values
+
+
     
     def delete(self):
         if self._value:
