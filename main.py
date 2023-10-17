@@ -3,6 +3,7 @@ from prettytable import PrettyTable
 import re
 
 class Validator:
+
     @staticmethod
     def can_be_empty(func):
         def wrapper(self, value):
@@ -11,16 +12,19 @@ class Validator:
             else:
                 return True
         return wrapper
+    
     def valid_as_name(self, text):
-        if len(text) < 2 or len(text) > 20:
+        if len(text) < 2 or len(text) > 20: # Домовились, що Даша знімить верхнє обмеження
             return False
         for digit in digits + punctuation:
             if digit in text:
                 return False
         return True
+    
     @can_be_empty
-    def valid_as_adress(self, text):
+    def valid_as_address(self, text): 
         return True
+    
     @can_be_empty
     def valid_as_phone_number(self, text):
         phone_number_patterns = [
@@ -29,10 +33,12 @@ class Validator:
             r"\+\d{10,12}",
         ]
         return any( [bool(re.fullmatch( ptrn, text )) for ptrn in phone_number_patterns] )
+    
     @can_be_empty
     def valid_as_email(self, text):
         email_pattern = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
         return bool(re.fullmatch( email_pattern, text ))
+    
     @can_be_empty
     def valid_as_birthday(self, text):
         days_count = {
@@ -57,6 +63,7 @@ class Validator:
         if (month not in days_count) or (days < 1 or days > days_count[month]):
             return False
         return True
+    
     def valid_input( self, validator, text, error_text ):
         value = input(text)
         while not validator(value):
@@ -65,97 +72,172 @@ class Validator:
         return value
 
 class Person:
+
     def __init__(self, 
                     name: str, 
-                    adress: str = None, 
+                    address: str = None, 
                     phone_number: str = None, 
                     email: str = None,
-                    birthday: str = None
+                    birthday: str = None,
+                    notes: str = None
                 ):
         self.name = name
         self.phone_number = phone_number
         self.email = email
-        self.adress = adress
+        self.address = address
         self.birthday = birthday
+        self.notes = notes
+
     @property
     def row(self):
-        return [self.name, self.phone_number, self.email, self.adress, self.birthday]
+        return [self.name, self.phone_number, self.email, self.address, self.birthday, self.notes._value]
+    
+    
     def __repr__(self):
-        return f"Person({self.name}, {self.adress}, {self.phone_number}, {self.email}, {self.birthday}"
+        return f"Person {self.name}, {self.address}, {self.phone_number}, {self.email}, {self.birthday}"
+    
 
-class Helper:
-    def __init__(self):
-        self.peoples = []
-    def create(self):
-        validator = Validator()
+class Notes:
 
-        name = validator.valid_input( validator.valid_as_name, "Enter name:", "You have entered the wrong name, please recheck and try again." )
-        phone_number = validator.valid_input( validator.valid_as_phone_number, "Enter phone number:", "You have entered the wrong phone number, please recheck and try again." )
-        email = validator.valid_input( validator.valid_as_email, "Enter email adress:", "You have entered the wrong email, please recheck and try again." )
-        adress = validator.valid_input( validator.valid_as_adress, "Enter your adress:", "You have entered the wrong adress, please recheck and try again." )
-        birthday = validator.valid_input( validator.valid_as_birthday, "Enter your birthday date(ex. 23 May):", "You have entered the wrong birthday date, please recheck and try again." )
+    def __init__(self, value) -> None:
+        self._value = value
+        self._tags = None
+    
+    @property
+    def value(self):
+        return self._value
+    
+    @value.setter
+    def value(self, new_value): 
+        if new_value:
+            self._value = new_value
+
+    @property
+    def tags(self):
+        if self._tags:
+            return self._tags
+        return f'There are no tags.'
         
-        new_person = Person( name, adress, phone_number, email, birthday )
-        self.peoples.append( new_person )
+    @tags.setter
+    def tags(self, new_tag_values):
+        if new_tag_values:
+            self._tags = new_tag_values
+    
+    def delete(self):
+        if self._value:
+            self._value = ""
+            return "Notes have been deleted."
+        return "There are not notes."
+
+
+
+
+class Helper:    
+
+    def __init__(self):
+        self.people = []
+        self.validator = Validator()
+        self._attributes = ['name', 'phone number', 'email address', 'address', 'birthday date', 'notes']
+    
+    def _message(self, attribute, valid_input = True):
+        
+        if valid_input:
+            return  f'Enter your {self._attributes[self._attributes.index(attribute)]}: ' if attribute != 'birthday date' else f'Enter your {self._attributes[self._attributes.index(attribute)]} (e.g., 23 May): '
+        return f"You have entered invalid {self._attributes[self._attributes.index(attribute)]}. Please recheck and try again. "    
+
+    def create(self):
+        
+        name = self.validator.valid_input( self.validator.valid_as_name, self._message('name'),  self._message('name', 0) )
+        phone_number = self.validator.valid_input( self.validator.valid_as_phone_number, self._message('phone number'), self._message('phone number', 0))
+        email = self.validator.valid_input( self.validator.valid_as_email, self._message('email address'), self._message('email address', 0) )
+        address = self.validator.valid_input( self.validator.valid_as_address, self._message('address'), self._message('address', 0) )
+        birthday = self.validator.valid_input( self.validator.valid_as_birthday, self._message('birthday date'), self._message('birthday date', 0)  )
+        notes = Notes(input(self._message('notes')))
+
+        new_person = Person( name, address, phone_number, email, birthday, notes )
+        self.people.append( new_person )
+
+
     def edit_attribute_menu(self, contact):
         # Добавить кнопку отмены
-        validator = Validator()
-        text = """Choose attribute to edit:\n1. Name\n2. Phone\n3. Email\n4. Adress\n5. Birthday\n6. Cancel\n"""
+        
+        text = """Choose attribute to edit:\n1. Name\n2. Phone\n3. Email\n4. address\n5. Birthday\n6. Notes\n0. Cancel\nYour choice: """
         attribute = input(text)
         if attribute == "1":
-            contact.name = validator.valid_input( validator.valid_as_name, "Enter name:", "You have entered the wrong name, please recheck and try again." )
+            contact.name = self.validator.valid_input( self.validator.valid_as_name, self._message('name'),  self._message('name', 0) )
         elif attribute == "2":
-            contact.phone_number = validator.valid_input( validator.valid_as_phone_number, "Enter phone number:", "You have entered the wrong phone number, please recheck and try again." )
+            contact.phone_number = self.validator.valid_input( self.validator.valid_as_phone_number, self._message('phone number'), self._message('phone number', 0))
         elif attribute == "3":
-            contact.email = validator.valid_input( validator.valid_as_email, "Enter email adress:", "You have entered the wrong email, please recheck and try again." )
+            contact.email = self.validator.valid_input( self.validator.valid_as_email, self._message('email address'), self._message('email address', 0) )
         elif attribute == "4":
-            contact.adress = validator.valid_input( validator.valid_as_adress, "Enter your adress:", "You have entered the wrong adress, please recheck and try again." )
+            contact.address =self.validator.valid_input( self.validator.valid_as_address, self._message('address'), self._message('address', 0) )
         elif attribute == "5":
-            contact.birthday = validator.valid_input( validator.valid_as_birthday, "Enter your birthday date(ex. 23 May):", "You have entered the wrong birthday date, please recheck and try again." )
-        print( "Changes has been saved" )
+            contact.birthday = self.validator.valid_input( self.validator.valid_as_birthday, self._message('birthday date'), self._message('birthday date', 0)  )
+        elif attribute == "6":
+            edit_delete_note_input = input('\n1. Edit note.\n2. Delete note.\nYour choice: ').strip()
+            if edit_delete_note_input == '1':
+                contact.notes.value = input('Please enter your new note: ')
+            elif edit_delete_note_input == '2':
+                contact.notes.delete()
+        
+
+
     def edit(self):
         text = "Enter contact name to edit: "
         contact_name = input(text)
-        founded = list(filter( lambda con: contact_name.lower() in con.name.lower(), self.peoples ))
-        if len(founded) == 1:
-            self.edit_attribute_menu( founded[0] )
-        else:
-            table = PrettyTable()
-            table.field_names = ["№", "Name"]
-            for index, con in enumerate(founded):
-                table.add_row( (index, con.name) )
-            print( table )
-            number = input("Choose number contact to change: ")
-            if number.isdigit() and int(number) < len(founded):
-                self.edit_attribute_menu( founded[int(number)] )
-            # ------------- ВЕРНУТСЯ В ГЛАВНЫЙ ЦИКЛ
+        found = list(filter( lambda con: contact_name.lower() in con.name.lower(), self.people ))
+
+        if found:
+            if len(found) == 1:
+                self.edit_attribute_menu( found[0] )
+                return 1
+            else:
+                table = PrettyTable()
+                table.field_names = ["№", "Name"]
+                for index, con in enumerate(found):
+                    table.add_row( (index, con.name) )
+                print( table )
+                number = input("Choose number contact to change: ")
+                if number.isdigit() and int(number) < len(found):
+                    self.edit_attribute_menu( found[int(number)] )
+                    return 1
+                # ------------- ВЕРНУТСЯ В ГЛАВНЫЙ ЦИКЛ
+        return 
+        
+
     def find_by_coming_birthday(self, days_count):
         # ПОЛНОСТЬЮ ПЕРЕПИСАТТЬ 
-        goal_peoples = []
-        for person in self.peoples:
+        goal_people = []
+        for person in self.people:
             if person.birthday.day - datetime.now().day == days_count:
-                goal_peoples.append( person )
-        return goal_peoples
+                goal_people.append( person )
+        return goal_people
+    
     def find_by_coming_birthday_menu( self ):
         ans = int(input("Enter days count: "))
         while ans.isdigit() and ans < 0:
             print( "You can enter only positive value" )
             ans = int(input("Enter days count: "))
         print( self.find_by_coming_birthday_menu( ans ) )
+
     def display_contacts(self):
         table = PrettyTable()
-        table.field_names = ["Name", "Phone", "Email", "Adress", "Birthday"]
-        for con in self.peoples:
+        table.field_names = [attr.upper() for attr in self._attributes]
+        for con in self.people:
             table.add_row( con.row )
         print( table )
+
+
     def menu(self):
         while True:
-            menu_text = """1. Create new contact\n2. Edit contact\n3. Find by coming birthday\n4. Display contacts\n0. Exit\n"""
+            menu_text = """Menu:\n1. Create a new contact\n2. Edit contact\n3. Find by coming birthday\n4. Display contacts\n0. Exit\nChoose a number: """
             ans = input(menu_text)
             if ans == "1":
                 self.create()
+                print('Contact has been created.')
             elif ans == "2":
-                self.edit()
+                edit_success = self.edit()
+                print("Changes have been saved") if edit_success else print('Contact not found. Please try again.')
             elif ans == "3":
                 self.find_by_coming_birthday_menu()
             elif ans == "4":
