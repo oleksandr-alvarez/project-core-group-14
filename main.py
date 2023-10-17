@@ -125,7 +125,7 @@ class Notes:
     
     def delete(self):
         if self._value:
-            self._value = ""
+            self._value = None
             return "Notes have been deleted."
         return "There are not notes."
 
