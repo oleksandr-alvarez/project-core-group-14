@@ -205,6 +205,33 @@ class Helper:
         return 
         
 
+    def delete_contact(self):
+        name_to_delete = input("Enter the name of the contact you want to delete: ")
+        matching_contacts = [person for person in self.people if person.name.lower() == name_to_delete.lower()]
+
+        if not matching_contacts:
+            print(f"No contact with the name '{name_to_delete}' found.")
+        else:
+            if len(matching_contacts) == 1:
+                contact_to_delete = matching_contacts[0]
+                self.people.remove(contact_to_delete)
+                print(f"{contact_to_delete.name} has been deleted.")
+            else:
+                print("Contacts with the same name found. Please select the contact to delete:")
+                table = PrettyTable()
+                table.field_names = ["ID", "Name", "Phone"]
+                for index, contact in enumerate(matching_contacts):
+                    table.add_row([index, contact.name, contact.phone_number])
+                print(table)
+                contact_id = int(input("Enter the ID of the contact to delete: "))
+                if 0 <= contact_id < len(matching_contacts):
+                    contact_to_delete = matching_contacts[contact_id]
+                    self.people.remove(contact_to_delete)
+                    print(f"{contact_to_delete.name} has been deleted.")
+                else:
+                    print("Invalid ID. No contact has been deleted.")
+
+
     def find_by_coming_birthday(self, days_count):
         # ПОЛНОСТЬЮ ПЕРЕПИСАТТЬ 
         goal_people = []
@@ -227,10 +254,28 @@ class Helper:
             table.add_row( con.row )
         print( table )
 
+    def search_contact(self):
+        search_term = input("Enter a name or phone number to search for: ").strip().lower()
+        results = []
+
+        for contact in self.people:
+            if search_term in contact.name.lower() or (contact.phone_number and search_term in contact.phone_number):
+                results.append(contact)
+
+        if results:
+            table = PrettyTable()
+            table.field_names = [attr.upper() for attr in self._attributes]
+            for contact in results:
+                table.add_row(contact.row)
+            print("\nSearch results:")
+            print(table)
+        else:
+            print(f"No contacts found for '{search_term}'.")    
+
 
     def menu(self):
         while True:
-            menu_text = """Menu:\n1. Create a new contact\n2. Edit contact\n3. Find by coming birthday\n4. Display contacts\n0. Exit\nChoose a number: """
+            menu_text = """Menu:\n1. Create a new contact\n2. Edit contact\n3. Find by coming birthday\n4. Display contacts\n5. Delete contact\n6. Search contacts\n0. Exit\nChoose a number: """
             ans = input(menu_text)
             if ans == "1":
                 self.create()
@@ -242,6 +287,10 @@ class Helper:
                 self.find_by_coming_birthday_menu()
             elif ans == "4":
                 self.display_contacts()
+            elif ans == "5":
+                self.delete_contact()
+            elif ans == "6":
+                self.search_contact()    
             else:
                 return
 
