@@ -1,0 +1,17 @@
+Metadata-Version: 2.1
+Name: util-func
+Version: 0.0.2
+Summary: Python utility function library.
+Home-page: https://github.com/TaiRongSyuStudio/util_func.git
+Author: Rong hsu
+Author-email: s5952360@gmail.com
+License: UNKNOWN
+Platform: UNKNOWN
+Classifier: Programming Language :: Python :: 3
+Classifier: License :: OSI Approved :: MIT License
+Classifier: Operating System :: OS Independent
+Description-Content-Type: text/markdown
+
+Python utility function library.
+[util_func](https://github.com/TaiRongSyuStudio/util_func.git)
+
