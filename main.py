@@ -210,9 +210,11 @@ def main():
                     id_of_the_contact_to_edit = input(f"{TextColor.YELLOW}\nChoose ID: {TextColor.RESET}")
                     contact_to_edit = [contact for contact in found_contacts if contact.id == int(id_of_the_contact_to_edit)]
                     display_contacts(contact_to_edit)
+                    
                 if len(found_contacts) == 1:
                     contact_to_edit = contacts.find_contacts_of_names(name_of_contact_to_edit)
                     display_contacts(contact_to_edit)
+
                 if len(found_contacts) == 0:
                     print(f'{TextColor.MAGENTA}There is no contact named {name_of_contact_to_edit}.{TextColor.RESET}')
                     continue
@@ -250,6 +252,7 @@ def main():
                 if contacts_within_timeframe:
                     display_contacts(contacts_within_timeframe)
                 print(f'{TextColor.MAGENTA}There are no coming birthdays in the nearest {days_within_to_search_birthday_people} days.{TextColor.RESET}')
+                continue
             else:
                 print(THERE_ARE_NO_CONTACTS_TEXT)
                 continue
