@@ -7,10 +7,10 @@ import sort
   
    
 
+
 class Contact:
 
     id = 0
-
     def __init__(self, 
                     name: str, 
                     address: str = None, 
@@ -50,9 +50,7 @@ class Contact:
         elif attribute.find('notes') >= 0: 
             self.notes.value = new_value
         
-    
-class Book(UserList):
-    
+class Book(UserList):  
 
     def add_contact(self, contact):
         self.data.append(contact)
@@ -150,10 +148,10 @@ class Notes:
         if new_tag_values:
             for tag in new_tag_values:
                 self._tags.add(tag.strip())
-    
+   
     def delete(self):
         if self._value:
-            self._value = ""
+            self._value = None
             return "Notes have been deleted."
         return "There are not notes."
     
@@ -297,7 +295,7 @@ def main():
             else:
                 print(THERE_ARE_NO_CONTACTS_TEXT)
                 continue
-
+                
         if menu_choice == '6':
             if contacts:
                 display_contacts(contacts)
@@ -306,6 +304,7 @@ def main():
                 deleted_contact = [contacts.delete_contact_by_id(id_to_delete)]
                 print(f"{TextColor.GREEN}The following contact has been deleted from the book:{TextColor.RESET}")
                 display_contacts(deleted_contact)
+
             else:
                 print(THERE_ARE_NO_CONTACTS_TEXT)
         
