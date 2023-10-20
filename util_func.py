@@ -319,6 +319,8 @@ def find_sort_contacts_by_tags(book):
                 display_contacts(contacts_without_tags)
 
         elif find_or_sort == '1':
+            print(f"{TextColor.MAGENTA}Available tags are: {TextColor.RESET}", end="")
+            print(contact.notes.tags)
             tag_input_to_find = input(f"{TextColor.YELLOW}Please enter a valid tag: {TextColor.RESET}")
             for contact in contacts_with_tags:
                 if tag_input_to_find in contact.notes.tags:
