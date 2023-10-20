@@ -137,7 +137,7 @@ def get_valid_choice(func):
 
 def get_valid_number_of_days():
     while True:
-        number_of_days = input("Please enter number of day within which you want to see birthdays: ")
+        number_of_days = input(f"{TextColor.YELLOW}Please enter number of day within which you want to see birthdays: {TextColor.RESET}")
         if number_of_days:
             if re.match('^(0|[1-9]\d*)$', number_of_days):
                 return number_of_days

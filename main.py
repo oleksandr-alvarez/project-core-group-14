@@ -251,8 +251,9 @@ def main():
                 contacts_within_timeframe = contacts.find_nearest_birthday_people(days_within_to_search_birthday_people)
                 if contacts_within_timeframe:
                     display_contacts(contacts_within_timeframe)
-                print(f'{TextColor.MAGENTA}There are no coming birthdays in the nearest {days_within_to_search_birthday_people} days.{TextColor.RESET}')
-                continue
+                else:
+                    print(f'{TextColor.MAGENTA}There are no coming birthdays in the nearest {days_within_to_search_birthday_people} days.{TextColor.RESET}')
+                
             else:
                 print(THERE_ARE_NO_CONTACTS_TEXT)
                 continue
