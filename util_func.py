@@ -28,7 +28,7 @@ class TextColor:
 
 def number_of_commands(menu_or_edit):
     if menu_or_edit == 'menu':
-        return 11
+        return 12
     if menu_or_edit == 'edit':
         return 7
     if menu_or_edit == 'find':

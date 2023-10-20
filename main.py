@@ -4,8 +4,6 @@ import pickle
 
 from util_func import *
 import sort
-  
-   
 
 
 class Contact:
@@ -162,14 +160,13 @@ class Notes:
 
 
 def main():
-    MENU_TEXT = """\nMenu:\n1. Create a new contact\n2. Edit contact\n3. Find nearest birthday people\n4. Display all contacts\n5. Find contacts\n6. Delete contact\n7. Find notes\n8. Sort or find contacts by tags\n9. Sort folders in the path\n10. Save information as a file\n0. Exit bot-assistant\n"""
+    MENU_TEXT = """\nMenu:\n1. Create a new contact\n2. Edit contact\n3. Find nearest birthday people\n4. Display all contacts\n5. Find contacts\n6. Delete contact\n7. Find notes\n8. Sort or find contacts by tags\n9. Sort folders in the path\n10. Save information as a file\n11. Load data from a file\n0. Exit bot-assistant\n"""
     THERE_ARE_NO_CONTACTS_TEXT = f'{TextColor.RED}There no contacts yet. Please create a new contact.{TextColor.RESET}'
 
     CREATE_NEW_CONTACT_TEXT = "\nTo create a new contact I will ask you for a name, phone number, email addrees, address, birthday date, notes.\nContact can't be created without a name.\n"
     EDIT_TEXT = """\nChoose attribute to edit:\n1. Name\n2. Phone number\n3. Birthday date\n4. Email address\n5. Address\n6. Notes\n7. Tags\n"""
 
     contacts = Book()
-    
 
     while True:
         print(MENU_TEXT)
@@ -236,8 +233,7 @@ def main():
             elif arg == "":
                 
                 show_input_tag(contact_to_edit[0])
-                continue
-                
+                continue 
                     
             else:
                 new_value_of_attribute = command(arg)
@@ -258,7 +254,6 @@ def main():
                 print(THERE_ARE_NO_CONTACTS_TEXT)
                 continue
 
-        
         if menu_choice == '4':
             if contacts:
                 display_contacts(contacts)
@@ -290,8 +285,7 @@ def main():
                         decision_to_try_again = valid_choice_menu_edit_find('find')
                         if decision_to_try_again == 2:
                             break
-
-                    
+        
             else:
                 print(THERE_ARE_NO_CONTACTS_TEXT)
                 continue
